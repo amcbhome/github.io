@@ -1,0 +1,135 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/amcbhome/github.io/blob/main/my_streamlit\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import streamlit as st\n",
+        "import pandas as pd\n",
+        "import numpy as np\n",
+        "\n",
+        "st.title('Uber pickups in NYC')\n",
+        "\n",
+        "DATE_COLUMN = 'date/time'\n",
+        "DATA_URL = ('https://s3-us-west-2.amazonaws.com/'\n",
+        "            'streamlit-demo-data/uber-raw-data-sep14.csv.gz')\n",
+        "\n",
+        "@st.cache_data\n",
+        "def load_data(nrows):\n",
+        "    data = pd.read_csv(DATA_URL, nrows=nrows)\n",
+        "    lowercase = lambda x: str(x).lower()\n",
+        "    data.rename(lowercase, axis='columns', inplace=True)\n",
+        "    data[DATE_COLUMN] = pd.to_datetime(data[DATE_COLUMN])\n",
+        "    return data\n",
+        "\n",
+        "data_load_state = st.text('Loading data...')\n",
+        "data = load_data(10000)\n",
+        "data_load_state.text(\"Done! (using st.cache_data)\")\n",
+        "\n",
+        "if st.checkbox('Show raw data'):\n",
+        "    st.subheader('Raw data')\n",
+        "    st.write(data)\n",
+        "\n",
+        "st.subheader('Number of pickups by hour')\n",
+        "hist_values = np.histogram(data[DATE_COLUMN].dt.hour, bins=24, range=(0,24))[0]\n",
+        "st.bar_chart(hist_values)\n",
+        "\n",
+        "# Some number in the range 0-23\n",
+        "hour_to_filter = st.slider('hour', 0, 23, 17)\n",
+        "filtered_data = data[data[DATE_COLUMN].dt.hour == hour_to_filter]\n",
+        "\n",
+        "st.subheader('Map of all pickups at %s:00' % hour_to_filter)\n",
+        "st.map(filtered_data)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "vvMpw8cm10tc",
+        "outputId": "e8c337a6-46d5-407e-bba2-0a0e571a9cb6"
+      },
+      "id": "vvMpw8cm10tc",
+      "execution_count": 3,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "2025-04-25 07:26:45.990 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2025-04-25 07:26:46.262 \n",
+            "  \u001b[33m\u001b[1mWarning:\u001b[0m to view this Streamlit app on a browser, run it with the following\n",
+            "  command:\n",
+            "\n",
+            "    streamlit run /usr/local/lib/python3.11/dist-packages/colab_kernel_launcher.py [ARGUMENTS]\n",
+            "2025-04-25 07:26:46.266 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2025-04-25 07:26:46.268 No runtime found, using MemoryCacheStorageManager\n",
+            "2025-04-25 07:26:46.271 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2025-04-25 07:26:46.274 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2025-04-25 07:26:46.275 No runtime found, using MemoryCacheStorageManager\n",
+            "2025-04-25 07:26:46.279 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2025-04-25 07:26:46.280 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2025-04-25 07:26:46.281 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2025-04-25 07:26:46.785 Thread 'Thread-8': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2025-04-25 07:26:46.787 Thread 'Thread-8': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2025-04-25 07:26:47.970 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2025-04-25 07:26:47.974 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2025-04-25 07:26:47.978 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2025-04-25 07:26:47.981 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2025-04-25 07:26:47.984 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2025-04-25 07:26:47.987 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2025-04-25 07:26:47.990 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2025-04-25 07:26:47.993 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2025-04-25 07:26:47.995 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2025-04-25 07:26:47.998 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2025-04-25 07:26:48.001 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2025-04-25 07:26:49.120 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2025-04-25 07:26:49.124 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2025-04-25 07:26:49.126 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2025-04-25 07:26:49.127 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2025-04-25 07:26:49.127 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2025-04-25 07:26:49.129 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2025-04-25 07:26:49.129 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2025-04-25 07:26:49.140 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2025-04-25 07:26:49.141 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2025-04-25 07:26:49.158 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n",
+            "2025-04-25 07:26:49.161 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.\n"
+          ]
+        },
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "DeltaGenerator()"
+            ]
+          },
+          "metadata": {},
+          "execution_count": 3
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "display_name": "Python 3",
+      "name": "python3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 5
+}
